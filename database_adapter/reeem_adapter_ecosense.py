@@ -10,13 +10,11 @@ __version__ = "v0.1.3"
 from reeem_io import *
 
 # input
-path = 'C:/Users/ds/Desktop/REEEM/Results/database_tables'
-folder = '2018-07-17'
 
-filename = "2018-06-17_HighRES_EcoSense_FrameworkV1_DataV3_output.csv"
-# filename = "2018-06-17_HighRES_EcoSense_FrameworkV2_DataV1_output.csv"
-# filename = "2018-06-17_BASE_EcoSense_FrameworkV2_DataV1_output.csv"
-# filename = "2018-06-17_BASE_EcoSense_FrameworkV1_DataV3_output.csv"
+filename = "2018-07-17_HighRES_EcoSense_FrameworkV1_DataV3_output.csv"
+# filename = "2018-07-17_HighRES_EcoSense_FrameworkV2_DataV1_output.csv"
+# filename = "2018-07-17_BASE_EcoSense_FrameworkV2_DataV1_output.csv"
+# filename = "2018-07-17_BASE_EcoSense_FrameworkV1_DataV3_output.csv"
 
 
 empty_rows = 1
@@ -31,7 +29,8 @@ def ecosense_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
 
     # read file
     #csv = os.path.join('Model_Data', 'EcoSense', filename)
-    csv = os.path.join(path,'/', folder,'/', filename)
+    csv = os.path.join('C:/Users/ds/Desktop/REEEM/Results/database_tables', '2018-07-17', filename)
+
     df = pd.read_csv(csv, sep=';')
 
     # make dataframe
