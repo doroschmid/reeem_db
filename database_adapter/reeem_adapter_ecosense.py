@@ -10,11 +10,14 @@ __version__ = "v0.1.3"
 from reeem_io import *
 
 # input
-filename = "2018-06-07_HighRES_EcoSense_FrameworkV1_DataV2_output.csv"
-# filename = "2018-04-11_PathwayNA_EcoSenseEVA_FrameworkV2_DataV1_Output.csv"
-# filename = "2018-05-16_PathwayNA_EcoSenseEVA_FrameworkV2_DataV1_Output.csv"
-# filename = "2018-06-07_BASE_EcoSense_FrameworkV1_DataV3_Output.csv"
-# filename = "2018-06-07_HighRES_EcoSense_FrameworkV1_DataV2_output.csv"
+path = 'C:/Users/ds/Desktop/REEEM/Results/database_tables'
+folder = '2018-07-17'
+
+filename = "2018-06-17_HighRES_EcoSense_FrameworkV1_DataV3_output.csv"
+# filename = "2018-06-17_HighRES_EcoSense_FrameworkV2_DataV1_output.csv"
+# filename = "2018-06-17_BASE_EcoSense_FrameworkV2_DataV1_output.csv"
+# filename = "2018-06-17_BASE_EcoSense_FrameworkV1_DataV3_output.csv"
+
 
 empty_rows = 1
 
@@ -27,7 +30,8 @@ def ecosense_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
     """read csv file, make dataframe and write to database"""
 
     # read file
-    csv = os.path.join('Model_Data', 'EcoSense', filename)
+    #csv = os.path.join('Model_Data', 'EcoSense', filename)
+    csv = os.path.join(path,'/', folder,'/', filename)
     df = pd.read_csv(csv, sep=';')
 
     # make dataframe
