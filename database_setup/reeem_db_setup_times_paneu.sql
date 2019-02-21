@@ -36,6 +36,9 @@ CREATE TABLE            model_draft.reeem_times_paneu_input (
     "aggregation"   boolean,
     "tags"          hstore,
     "updated"       timestamp with time zone,
+    "source"        text,
+    "schema"        text,
+    "field"         text,
     CONSTRAINT reeem_times_paneu_input_pkey PRIMARY KEY (id) );
 
 -- access rights
@@ -73,7 +76,8 @@ COMMENT ON TABLE model_draft.reeem_times_paneu_input IS
         {"name": "Ludee", "email": "none", "date": "2017-11-02", "comment": "Update structure"},
         {"name": "Ludee", "email": "none", "date": "2017-11-06", "comment": "Include pathway"},
         {"name": "Ludee", "email": "none", "date": "2018-01-30", "comment": "New naming structure"},
-        {"name": "Ludee", "email": "none", "date": "2018-02-27", "comment": "Simplify structure"} ],
+        {"name": "Ludee", "email": "none", "date": "2018-02-27", "comment": "Simplify structure"},
+        {"name": "4lm", "email": "none", "date": "2019-01-31", "comment": "Alter table, add missing columns"} ],
     "resources": [
         {"name": "model_draft.reeem_times_paneu_input",
         "format": "PostgreSQL",
@@ -92,11 +96,12 @@ COMMENT ON TABLE model_draft.reeem_times_paneu_input IS
             {"name": "unit", "description": "Parameter unit", "unit": "none"},
             {"name": "aggregation", "description": "True if aggregated", "unit": "none"},
             {"name": "tags", "description": "Free classification", "unit": "none"},
-            {"name": "updated", "description": "Timestamp", "unit": "none"} ] } ],
+            {"name": "updated", "description": "Timestamp", "unit": "none"},
+            {"name": "source", "description": "Data source", "unit": "none"} ] } ],
     "metadata_version": "1.3"}';
 
 -- scenario log (project,version,io,schema_name,table_name,script_name,comment)
-SELECT scenario_log('REEEM','v0.1.0','setup','model_draft','reeem_times_paneu_input','reeem_db_setup_times_paneu.sql',' ');
+SELECT scenario_log('REEEM','v0.2.0','setup','model_draft','reeem_times_paneu_input','reeem_db_setup_times_paneu.sql',' ');
 
 
 -- TIMES PanEU Output
@@ -117,6 +122,8 @@ CREATE TABLE            model_draft.reeem_times_paneu_output (
     "aggregation"   boolean,
     "tags"          hstore,
     "updated"       timestamp with time zone,
+    "schema"        text,
+    "field"         text,
     CONSTRAINT reeem_times_paneu_output_pkey PRIMARY KEY (id) );
 
 -- access rights
@@ -155,7 +162,8 @@ COMMENT ON TABLE model_draft.reeem_times_paneu_output IS
         {"name": "Ludee", "email": "none", "date": "2018-01-30", "comment": "New naming structure"},
         {"name": "Ludee", "email": "none", "date": "2018-02-27", "comment": "Simplify structure"},
         {"name": "Ludee", "email": "none", "date": "2018-03-15", "comment": "Add license"},
-        {"name": "Ludee", "email": "none", "date": "2018-10-08", "comment": "Add source"}],
+        {"name": "Ludee", "email": "none", "date": "2018-10-08", "comment": "Add source"},
+        {"name": "4lm", "email": "none", "date": "2019-01-31", "comment": "Alter table, add missing columns"}],
     "resources": [
         {"name": "model_draft.reeem_times_paneu_output",
         "format": "PostgreSQL",
@@ -178,4 +186,4 @@ COMMENT ON TABLE model_draft.reeem_times_paneu_output IS
     "metadata_version": "1.3"}';
 
 -- scenario log (project,version,io,schema_name,table_name,script_name,comment)
-SELECT scenario_log('REEEM','v0.1.0','setup','model_draft','reeem_times_paneu_output','reeem_db_setup_times_paneu.sql',' ');
+SELECT scenario_log('REEEM','v0.2.0','setup','model_draft','reeem_times_paneu_output','reeem_db_setup_times_paneu.sql',' ');

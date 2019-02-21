@@ -4,64 +4,34 @@ __copyright__ = "© Reiner Lemoine Institut"
 __license__ = "GNU Affero General Public License Version 3 (AGPL-3.0)"
 __url__ = "https://www.gnu.org/licenses/agpl-3.0.en.html"
 __author__ = "Ludwig Hülk"
-__issue__ = "https://github.com/ReeemProject/reeem_db/issues/4"
+__issue__ = "https://github.com/ReeemProject/reeem_db/issues/45"
 __version__ = "v0.2.0"
 
 from reeem_io import *
 
 # input
 filenames = [
-#              '2017-10-27_Pilot_TIMESPanEU_FrameworkV1_DataV1_Input.xlsx',
-#              '2017-10-27_Pilot_TIMESPanEU_FrameworkV1_DataV1_Output.xlsx',
-# 
-#              '2017-11-15_HighRES_TIMESPanEU_FrameworkV1_DataV1_Input.xlsx',
-#              '2017-11-15_HighRES_TIMESPanEU_FrameworkV1_DataV1_Output.xlsx',
-# 
-# #            '2017-11-15_HighRES_TIMESPanEU_FrameworkV1_DataV2_Output.xlsx", #MISSING!
-# 
-#              '2018-07-10_HighRES_TIMESPanEU_FrameworkV1_DataV3_Output.xlsx',
-#              '2018-07-10_HighRES_TIMESPanEU_FrameworkV2_DataV1_Output.xlsx',
-# 
-#              '2017-11-15_StorageInnov_TIMESPanEU_FrameworkV1_DataV1_Input.xlsx',
-#              '2017-11-15_StorageInnov_TIMESPanEU_FrameworkV1_DataV1_Output.xlsx',
-# 
-#              '2017-11-15_Base_TIMESPanEU_FrameworkV1_DataV1_Input.xlsx',
-#              '2017-11-15_Base_TIMESPanEU_FrameworkV1_DataV1_Output.xlsx',
-# 
-#              '2018-01-16_Base_TIMESPanEU_FrameworkV1_DataV2_Input.xlsx',
-#              '2018-01-16_Base_TIMESPanEU_FrameworkV1_DataV2_Output.xlsx',
-# 
-#              '2018-07-10_Base_TIMESPanEU_FrameworkV2_DataV1_Input.xlsx',
-#              '2018-07-10_Base_TIMESPanEU_FrameworkV2_DataV1_Output.xlsx',
-# 
-#              '2018-08-01_Base_TIMESPanEU_FrameworkV1_DataV3_Input.xlsx',
-#              '2018-07-19_Base_TIMESPanEU_FrameworkV1_DataV3_Output.xlsx']
-
-             # '2018-12-20_Base_TIMESPanEU_FrameworkV1_DataV4_Input.xlsx',
-             '2018-12-20_Base_TIMESPanEU_FrameworkV1_DataV4_Output.xlsx',
-             '2018-12-20_Base_TIMESPanEU_FrameworkV2_DataV2_Output.xlsx',
-             '2018-12-20_HighRES_TIMESPanEU_FrameworkV1_DataV4_Output.xlsx']
+            '2019-01-28_Pilot_OSeMOSYSMESCA_FrameworkNA_DataV1_Input.xlsx',
+            '2019-01-28_Pilot_OSeMOSYSMESCA_FrameworkNA_DataV1_Output.xlsx']
 
 # regions
-# regions = ['AT']
-regions = ['EU28','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES',
-            'FI','FR','GR','HR','HU','IE','IT','LT','LU','LV',
-            'MT','NL','NO','PL','PT','RO','SE','SI','SK','UK']
+# regions = ['EE']
+regions = ['EE','FI','LT','LV']
 
 empty_rows = 4
 
 # database table
 db_schema = 'model_draft'
-db_table_input = 'reeem_times_paneu_input'
-db_table_output = 'reeem_times_paneu_output'
+db_table_input = 'reeem_osemosys_mesca_input'
+db_table_output = 'reeem_osemosys_mesca_output'
 
 
-def times_paneu_2_reeem_db(filename, fns, db_table, empty_rows, db_schema,
+def osemosys_mesca_2_reeem_db(filename, fns, db_table, empty_rows, db_schema,
                            region, con):
     """read excel file and sheets, make dataframe and write to database"""
 
     # read file
-    path = os.path.join('Model_Data', 'TIMESPanEU', filename)
+    path = os.path.join('Model_Data', 'OSeMOSYSMESCA', filename)
     xls = pd.ExcelFile(path)
     df = pd.read_excel(xls, region, header=empty_rows, index_col='ID')
     log.info('...read sheet: {}'.format(region))
@@ -70,44 +40,44 @@ def times_paneu_2_reeem_db(filename, fns, db_table, empty_rows, db_schema,
     if fns['io'] == "Input":
 
         # label columns
-        df.columns = ['indicator', 'unit',
-                    '2015', '2020', '2025', '2030', '2035', 
-                    '2040', '2045', '2050', 'field', 'category', 
-                    'aggregation', 'source']
+        # df.columns = ['indicator', 'unit',
+                    # '2015', '2020', '2025', '2030', '2035', 
+                    # '2040', '2045', '2050', 'field', 'category', 
+                    # 'aggregation', 'source']
         df.index.names = ['nid']
+        # print(df.head())
     
         # seperate columns
-        dfunit = df[['category', 'indicator', 'unit', 'aggregation', 'source'
+        dfbase = df[['indicator', 'unit', 'field', 'category', 'aggregation', 'source'
                     ]].copy()
-        dfunit.index.names = ['nid']
-        # dfunit.columns = ['category', 'indicator', 'unit', 'aggregation']
-        # print(dfunit.head())
+        dfbase.index.names = ['nid']
+        # print(dfbase.head())
     
         # drop seperated columns
         dfclean = df.drop(
-            ['field', 'category', 'indicator', 'unit', 'aggregation', 'source'],
+            ['indicator', 'unit', 'field', 'category', 'aggregation', 'source'],
             axis=1) #, 'source'
         # print(dfclean.head())
         
     else:
         
         # label columns
-        df.columns = ['indicator', 'unit',
-                    '2015', '2020', '2025', '2030', '2035', 
-                    '2040', '2045', '2050', 'field', 'category', 
-                    'aggregation']
+        # df.columns = ['indicator', 'unit',
+        #             '2015', '2020', '2025', '2030', '2035', 
+        #             '2040', '2045', '2050', 'field', 'category', 
+        #             'aggregation']
         df.index.names = ['nid']
     
         # seperate columns
-        dfunit = df[['category', 'indicator', 'unit', 'aggregation'
+        dfbase = df[['indicator', 'unit', 'field', 'category', 'aggregation'
                     ]].copy()
-        dfunit.index.names = ['nid']
-        # dfunit.columns = ['category', 'indicator', 'unit', 'aggregation']
-        # print(dfunit.head())
+        dfbase.index.names = ['nid']
+        # dfbase.columns = ['category', 'indicator', 'unit', 'aggregation']
+        # print(dfbase.head())
         
         # drop seperated columns
         dfclean = df.drop(
-            ['field', 'category', 'indicator', 'unit', 'aggregation'],
+            ['indicator', 'unit', 'field', 'category', 'aggregation'],
             axis=1)
         # print(dfclean.head())
 
@@ -119,7 +89,7 @@ def times_paneu_2_reeem_db(filename, fns, db_table, empty_rows, db_schema,
     # print(dfstack.head())
 
     # join dataframe for database
-    dfdb = dfstack.join(dfunit, on='nid')
+    dfdb = dfstack.join(dfbase, on='nid')
     dfdb.index.names = ['dfid']
     dfdb['pathway'] = fns['pathway']
     dfdb['framework'] = fns['framework']
@@ -174,7 +144,7 @@ if __name__ == '__main__':
     
         # import
         for region in regions:
-            times_paneu_2_reeem_db(filename, fns, db_table, empty_rows,
+            osemosys_mesca_2_reeem_db(filename, fns, db_table, empty_rows,
                                 db_schema, region, con)
     
         # scenario log

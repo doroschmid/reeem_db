@@ -4,45 +4,76 @@ __copyright__ = "© Reiner Lemoine Institut"
 __license__ = "GNU Affero General Public License Version 3 (AGPL-3.0)"
 __url__ = "https://www.gnu.org/licenses/agpl-3.0.en.html"
 __author__ = "Ludwig Hülk"
-__issue__ = "https://github.com/ReeemProject/reeem_db/issues/32"
+__issue__ = "https://github.com/ReeemProject/reeem_db/issues/12"
 __version__ = "v0.2.0"
 
 from reeem_io import *
 
 # input
-filenames = ['2018-07-17_BASE_EcoSense_FrameworkV1_DataV3_Output.csv',
-             '2018-07-17_BASE_EcoSense_FrameworkV2_DataV1_Output.csv',
-             '2018-07-17_HighRES_EcoSense_FrameworkV1_DataV3_Output.csv',
-             '2018-07-17_HighRES_EcoSense_FrameworkV2_DataV1_Output.csv']
+filenames = ['2018-11-13_pilot_NEWAGE_FrameworkNA_DataV1_Output.csv']
 
 empty_rows = 1
 
 # database table
 db_schema = 'model_draft'
-db_table_input = 'reeem_ecosense_input' 
-db_table_output = 'reeem_ecosense_output'
+db_table_input = 'reeem_newage_input' 
+db_table_output = 'reeem_newage_output'
 
 
-def ecosense_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
+def newage_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
     """read csv file, make dataframe and write to database"""
 
     # read file
-    #csv = os.path.join('Model_Data', 'EcoSense', filename)
-    csv = os.path.join('C:/Users/ds/Desktop/REEEM/Results/database_tables', '2018-07-17', filename)
-
-    df = pd.read_csv(csv, sep=';')
+    csv = os.path.join('Model_Data', 'NEWAGE', filename)
+    df = pd.read_csv(csv, sep=';', index_col='rid', encoding='utf-8')
+        # ,nrows = 100 
+    
+                     # dtype={"2011": Decimal,"2015": Decimal,
+                     #        "2020": Decimal,"2025": Decimal,
+                     #        "2030": Decimal,"2035": Decimal,
+                     #        "2040": Decimal,"2045": Decimal,
+                     #        "2050": Decimal})
 
     # make dataframe
-    df.columns = ['nid', 'category', 'region', 'region_2', 'year',
-                  'indicator', 'value', 'unit', 'aggregation', 'source']
-    df.index.names = ['dfid']
-    dfdb = df.drop(['source'], axis=1)
+    # df.columns = ['nid', 'scenario', 'region', 'field', 'category', 'indicator', 'unit', 
+    #               '2011', '2015', '2020', '2025', '2030', '2035',
+    #               '2040', '2045', '2050']
+    # df.set_index('nid').reset_index()
+    # print(df.head())
+    # print(df.dtypes)
+    
+    # seperate columns
+    dfunit = df[['scenario', 'region', 'category', 'field', 
+                 'indicator', 'unit', 'aggregation']].copy()
+    # dfunit.index.names = ['id']
+    # dfunit.columns = ['nid', 'scenario', 'region', 'field', 'category', 
+    #                   'indicator', 'unit']
+    # print(dfunit.head())
 
+    # drop seperated columns
+    dfclean = df.drop(
+        ['scenario', 'region', 'field', 'category', 'indicator', 'unit', 'aggregation'],
+        axis=1)
+    # print(dfclean.head())
+
+    # stack dataframe
+    dfstack = dfclean.stack().reset_index()
+    dfstack.columns = ['rid', 'year', 'value']
+    # dfstack.set_index(['nid','year'], inplace=True)
+    # dfstack.index.names = ['id']
+    # print(dfstack.head())
+
+    # join dataframe for database
+    dfdb = dfstack.join(dfunit, on='rid')
+    dfdb.index.names = ['id']
     dfdb['pathway'] = fns['pathway']
     dfdb['framework'] = fns['framework']
     dfdb['version'] = fns['version']
+    # dfdb['region'] = region
     dfdb['updated'] = fns['day']
-    #print(dfdb)
+    # (datetime.datetime.fromtimestamp(time.time())
+    # .strftime('%Y-%m-%d %H:%M:%S'))
+    # print(dfdb.head())
     
     # copy dataframe to database
     dfdb.to_sql(con=con,
@@ -87,7 +118,7 @@ if __name__ == '__main__':
         log.info('...database table: model_draft.{}'.format(db_table))
         
         # import sheets
-        ecosense_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con)
+        newage_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con)
     
         # scenario log
         scenario_log(con, 'REEEM', __version__, 'import', db_schema, db_table,

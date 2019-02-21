@@ -1,22 +1,29 @@
 /*
-NEWAGE Table Setup
+OSeMOSYS MESCA Table Setup
 
-NEWAGE Output
-
-https://github.com/ReeemProject/reeem_db/issues/12
+OSeMOSYS MESCA Input
+OSeMOSYS MESCA Output
 
 __copyright__   = "© Reiner Lemoine Institut"
 __license__     = "GNU Affero General Public License Version 3 (AGPL-3.0)"
 __url__         = "https://www.gnu.org/licenses/agpl-3.0.en.html"
-__author__      = "Ludwig Huelk"
+__author__      = "Ludwig Hülk"
+__issue__       = "https://github.com/ReeemProject/reeem_db/issues/45"
+
+ * This file is part of project REEEM (https://github.com/ReeemProject/reeem_db).
+ * It's copyrighted by the contributors recorded in the version control history:
+ * ReeemProject/reeem_db/database_setup/reeem_db_setup_osemosys_mesca.sql
+ * 
+ * SPDX-License-Identifier: AGPL-3.0-or-later
 */
 
 
--- NEWAGE Input
-DROP TABLE IF EXISTS    model_draft.reeem_newage_input CASCADE;
-CREATE TABLE            model_draft.reeem_newage_input (
+-- OSeMOSYS MESCA input
+DROP TABLE IF EXISTS    model_draft.reeem_osemosys_mesca_input CASCADE;
+CREATE TABLE            model_draft.reeem_osemosys_mesca_input (
     "id"            serial NOT NULL,
     "nid"           integer,
+    "dfid"          integer,
     "pathway"       text,
     "framework"     text,
     "version"       text,
@@ -32,27 +39,30 @@ CREATE TABLE            model_draft.reeem_newage_input (
     "tags"          hstore,
     "updated"       timestamp with time zone,
     "source"        text,
-    CONSTRAINT reeem_newage_input_pkey PRIMARY KEY (id) );
-    
-ALTER TABLE        model_draft.reeem_newage_input OWNER TO reeem_user;
-GRANT SELECT ON TABLE    model_draft.reeem_newage_input TO reeem_read WITH GRANT OPTION;
+    CONSTRAINT reeem_osemosys_mesca_input_pkey PRIMARY KEY (id) );
+
+-- access rights
+ALTER TABLE             model_draft.reeem_osemosys_mesca_input OWNER TO reeem_user;
+GRANT SELECT ON TABLE   model_draft.reeem_osemosys_mesca_input TO reeem_read WITH GRANT OPTION;
 
 -- metadata
-COMMENT ON TABLE model_draft.reeem_newage_input IS '{
-    "title": "NEWAGE Input",
-    "description": "Example data from NEWAGE model",
+COMMENT ON TABLE model_draft.reeem_osemosys_mesca_input IS 
+    '{"title": "REEEM OSeMOSYS MESCA Input",
+    "description": "Input parameters: Costs, Lifetime, Efficiency, Final demand",
     "language": [ "eng" ],
-    "spatial":
+    "spatial": 
         {"location": "none",
-        "extent": "gloabal",
-        "resolution": "country"},
-    "temporal":
-        {"reference_date": "none",
-        "start": "2011",
+        "extent": "EE, FI, LT, LV",
+        "resolution": "Country"},
+    "temporal": 
+        {"reference_date": "2015",
+        "start": "2015",
         "end": "2050",
-        "resolution": "5 years"},
+        "resolution": "1 years"},
     "sources": [
-        {"name": "", "description": "", "url": "", "license": "", "copyright": ""} ],
+        {"name": "TIMES PanEU", "description": "", "url": "", "license": "", "copyright": ""},
+	{"name": "MESSAGE", "description": "", "url": "", "license": "", "copyright": ""},
+        {"name": "Technology data catalogue, 2018", "description": "", "url": "", "license": "", "copyright": ""} ],
     "license":
         {"id": "tba",
         "name": "tba",
@@ -61,19 +71,21 @@ COMMENT ON TABLE model_draft.reeem_newage_input IS '{
         "instruction": "tba",
         "copyright": "tba"},
     "contributors": [
-        {"name": "4lm", "email": "none", "date": "2019-01-31", "comment": "Update structure and add metadata"} ],
+        {"name": "Ludee", "email": "none", "date": "2019-01-28", "comment": "Create table and metadata"},
+        {"name": "Linas", "email": "none", "date": "2019-01-29", "comment": "Update metadata"} ],
     "resources": [
-        {"name": "model_draft.reeem_newage_input",
+        {"name": "model_draft.reeem_osemosys_mesca_input",
         "format": "PostgreSQL",
         "fields": [
             {"name": "id", "description": "Unique identifier", "unit": "none"},
-            {"name": "nid", "description": "Parameter ID", "unit": "none"},
+            {"name": "nid", "description": "Row id", "unit": "none"},
+            {"name": "dfid", "description": "Internal dataframe id", "unit": "none"},
             {"name": "pathway", "description": "REEEM pathway", "unit": "none"},
             {"name": "framework", "description": "REEEM framework", "unit": "none"},
             {"name": "version", "description": "REEEM version", "unit": "none"},
             {"name": "schema", "description": "1. classification", "unit": "none"},
-            {"name": "category", "description": "2. classification", "unit": "none"},
-            {"name": "tags", "description": "Free classification", "unit": "none"},
+            {"name": "field", "description": "2. classification", "unit": "none"},
+            {"name": "category", "description": "3. classification", "unit": "none"},
             {"name": "region", "description": "Country or region", "unit": "none"},
             {"name": "year", "description": "Year", "unit": "none"},
             {"name": "indicator", "description": "Parameter name", "unit": "none"},
@@ -86,22 +98,22 @@ COMMENT ON TABLE model_draft.reeem_newage_input IS '{
     "metadata_version": "1.3"}';
 
 -- scenario log (project,version,io,schema_name,table_name,script_name,comment)
-SELECT scenario_log('REEEM','v0.1.0','setup','model_draft','reeem_newage_input','database_setup_newage.sql',' ');
+SELECT scenario_log('REEEM','v0.2.0','setup','model_draft','reeem_osemosys_mesca_input','reeem_db_setup_osemosys_mesca.sql',' ');
 
 
--- NEWAGE Output
-DROP TABLE IF EXISTS    model_draft.reeem_newage_output CASCADE;
-CREATE TABLE            model_draft.reeem_newage_output (
+-- OSeMOSYS MESCA Output
+DROP TABLE IF EXISTS    model_draft.reeem_osemosys_mesca_output CASCADE;
+CREATE TABLE            model_draft.reeem_osemosys_mesca_output (
     "id"            serial NOT NULL,
-    "rid"           integer,
     "nid"           integer,
+    "dfid"          integer,
     "pathway"       text,
     "framework"     text,
     "version"       text,
-    "scenario"      text,
-    "region"        text,
+    "schema"        text,
     "field"         text,
     "category"      text,
+    "region"        text,
     "year"          smallint,
     "indicator"     text,
     "value"         double precision,
@@ -109,29 +121,29 @@ CREATE TABLE            model_draft.reeem_newage_output (
     "aggregation"   boolean,
     "tags"          hstore,
     "updated"       timestamp with time zone,
-    "schema"        text,
-    CONSTRAINT reeem_newage_output_pkey PRIMARY KEY (id) );
-    
-ALTER TABLE        model_draft.reeem_newage_output OWNER TO reeem_user;
-GRANT SELECT ON TABLE    model_draft.reeem_newage_output TO reeem_read WITH GRANT OPTION;
+    CONSTRAINT reeem_osemosys_mesca_output_pkey PRIMARY KEY (id) );
+
+-- access rights
+ALTER TABLE             model_draft.reeem_osemosys_mesca_output OWNER TO reeem_user;
+GRANT SELECT ON TABLE   model_draft.reeem_osemosys_mesca_output TO reeem_read WITH GRANT OPTION;
 
 -- metadata
-COMMENT ON TABLE model_draft.reeem_newage_output IS '{
-    "title": "NEWAGE Output",
-    "description": "Example data from NEWAGE model",
+COMMENT ON TABLE model_draft.reeem_osemosys_mesca_output IS 
+    '{"title": "REEEM OSeMOSYS MESCA Output",
+    "description": "Model provides Energy Security Coefficient (ESC)",
     "language": [ "eng" ],
     "spatial": 
         {"location": "none",
-        "extent": "gloabal",
-        "resolution": "country"},
+        "extent": "EE, FI, LT, LV",
+        "resolution": "Country"},
     "temporal": 
-        {"reference_date": "none",
-        "start": "2011",
+        {"reference_date": "2015",
+        "start": "2015",
         "end": "2050",
-        "resolution": "5 years"},
+        "resolution": "1 years"},
     "sources": [
-        {"name": "", "description": "", "url": "", "license": "", "copyright": ""} ],
-    "license": 
+        {"name": "OSeMOSYS MESCA", "description": "Model provides Energy Security Coefficient (ESC)", "url": "tba", "license": "none", "copyright": "none"} ],
+    "license":
         {"id": "tba",
         "name": "tba",
         "version": "tba",
@@ -139,21 +151,23 @@ COMMENT ON TABLE model_draft.reeem_newage_output IS '{
         "instruction": "tba",
         "copyright": "tba"},
     "contributors": [
-        {"name": "Ludwig Hülk", "email": "ludwig.huelk@rl-institut.de", "date": "2017-07-24", "comment": "Create table"},
-        {"name": "4lm", "email": "none", "date": "2019-01-31", "comment": "Alter table, add missing columns"} ],
+        {"name": "Ludee", "email": "none", "date": "2019-01-28", "comment": "Create table and metadata"},
+        {"name": "Linas", "email": "none", "date": "2019-01-29", "comment": "Update metadata"} ],
     "resources": [
-        {"name": "model_draft.reeem_newage_output",        
+        {"name": "model_draft.reeem_osemosys_mesca_output",
         "format": "PostgreSQL",
         "fields": [
             {"name": "id", "description": "Unique identifier", "unit": "none"},
             {"name": "nid", "description": "Row id", "unit": "none"},
+            {"name": "dfid", "description": "Internal dataframe id", "unit": "none"},
             {"name": "pathway", "description": "REEEM pathway", "unit": "none"},
             {"name": "framework", "description": "REEEM framework", "unit": "none"},
             {"name": "version", "description": "REEEM version", "unit": "none"},
+            {"name": "schema", "description": "1. classification", "unit": "none"},
+            {"name": "field", "description": "2. classification", "unit": "none"},
+            {"name": "category", "description": "3. classification", "unit": "none"},
             {"name": "region", "description": "Country or region", "unit": "none"},
-            {"name": "scenario", "description": "Scenario", "unit": "none"},
             {"name": "year", "description": "Year", "unit": "none"},
-            {"name": "category", "description": "2. classification", "unit": "none"},
             {"name": "indicator", "description": "Parameter name", "unit": "none"},
             {"name": "value", "description": "Parameter value", "unit": "unit"},
             {"name": "unit", "description": "Parameter unit", "unit": "none"},
@@ -163,4 +177,4 @@ COMMENT ON TABLE model_draft.reeem_newage_output IS '{
     "metadata_version": "1.3"}';
 
 -- scenario log (project,version,io,schema_name,table_name,script_name,comment)
-SELECT scenario_log('REEEM','v0.1.0','setup','model_draft','reeem_newage_output','database_setup_newage.sql',' ');
+SELECT scenario_log('REEEM','v0.2.0','setup','model_draft','reeem_osemosys_mesca_output','reeem_db_setup_osemosys_mesca.sql',' ');
