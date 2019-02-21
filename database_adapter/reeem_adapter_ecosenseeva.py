@@ -10,7 +10,8 @@ __version__ = "v0.2.0"
 from reeem_io import *
 
 # input
-filenames = ['2018-05-16_PathwayNA_EcoSenseEVA_FrameworkV2_DataV1_Output.csv']
+filenames = ['2018-12-11_PathwayNA_EcoSenseEVA_FrameworkV2_DataV2_Output.csv']
+folder = '~/Desktop/REEEM/results/cost_factors'
 
 empty_rows = 1
 
@@ -24,7 +25,7 @@ def ecosenseeva_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
     """read csv file, make dataframe and write to database"""
 
     # read file
-    csv = os.path.join('Model_Data', 'EcoSenseEVA', filename)
+    csv = os.path.join(folder, filename)
     df = pd.read_csv(csv, sep=';')
 
     # make dataframe
@@ -32,7 +33,7 @@ def ecosenseeva_2_reeem_db(filename, fns, db_table, empty_rows, db_schema, con):
                   'unit', 'source', 'TIMES_commodity']
     df.index.names = ['dfid']
     dfdb = df.drop(
-        ['source', 'TIMES_commodity'],
+        ['TIMES_commodity'],
         axis=1)
 
     dfdb['pathway'] = fns['pathway']
